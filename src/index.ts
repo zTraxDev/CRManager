@@ -5,26 +5,26 @@ import MongoStore from 'connect-mongo';
 import MongoSanitize from "express-mongo-sanitize"
 import passport from './config/passport.js'
 import { config } from './config/config.js';
-import { connectDB } from './config/db.js';
-import { eventLogger } from './utils/logger/logger.js';
 import { router } from './routes/index.routes.js';
 
 const app = express();
-const PORT = config.port;
 
 app.use(session({
     secret: config.session_secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: config.mongodbUri,
         collectionName: 'sessions',
-        ttl: 60 * 60
+        ttl: 6000 * 60, // 🔹 Expira en 100 horas
+        autoRemove: 'disabled'
     }),
     cookie: {
-        maxAge: 100 * 60 * 60
+        maxAge: 6000 * 60 * 1000,
+        httpOnly: true, // ⬅️ Protege contra ataques XSS
+        secure: false, // ⬅️ Cambia a `true` si usas HTTPS
     }
-}))
+}));
 
 app.use(MongoSanitize())
 app.use(express.json());
@@ -34,10 +34,5 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use('/', router)
-
-app.listen(PORT, () => {
-    eventLogger.info(`Servidor Express escuchando en http://localhost:${PORT}`)
-    connectDB()
-});
 
 export { app }

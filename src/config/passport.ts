@@ -1,14 +1,18 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { UserDocument } from "../interface/user.interface";
 import { userModel } from "../models/user.model";
 import bcrypt from "bcryptjs"
 import { eventLogger } from "../utils/logger/logger";
+import { Types } from "mongoose";
+
+type serializeUser = string
 
 passport.use(
     new LocalStrategy(
         {usernameField: 'email', passwordField: 'password'},
         async (email, password, done) => {
-            const user = await userModel.findOne({ email })
+            const user = await userModel.findOne({ email }).exec()
 
             if(!user) return done(null, false, { message: 'Usuario o contraseña invalida'})
 
@@ -22,10 +26,11 @@ passport.use(
     )
 )
 
-passport.serializeUser((user: any, done) => done(null, user._id))
-passport.deserializeUser(async (id, done) => {
+passport.serializeUser((user: UserDocument, done) => done(null, user._id))
+
+passport.deserializeUser(async (id: serializeUser, done) => {
     try {
-        const user = await userModel.findById(id)
+        const user = await userModel.findById(new Types.ObjectId(id)).exec();
         
         if(!user){
             return done(null, false)

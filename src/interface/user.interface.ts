@@ -4,12 +4,12 @@ interface UserIU {
     name: String,
     email: String,
     password: String,
-    clients: Schema.Types.ObjectId,
-    plans: Schema.Types.ObjectId,
+    clients: Schema.Types.ObjectId[],
+    plans: Schema.Types.ObjectId[],
     role: String
 }
 
 interface UserDocument extends UserIU, Document {}
 
 
-export { UserDocument}
+export { UserDocument, UserIU}
