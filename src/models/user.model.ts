@@ -20,7 +20,7 @@ const userSchema = new Schema<UserDocument>({
         ref: 'Clients'
     }],
     plans: [{
-        types: SchemaTypes.ObjectId,
+        type: SchemaTypes.ObjectId,
         ref: 'Planes'
     }],
     role: {

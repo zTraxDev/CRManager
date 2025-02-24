@@ -12,10 +12,18 @@ const plansSchema = new Schema<PlanDocument>({
         type: Number,
         required: true
     },
+    mbpsupload: {
+        type: Number,
+        required: true
+    },
+    mbpsdownload: {
+        type: Number,
+        required: true
+    },
     user: {
         type: SchemaTypes.ObjectId,
         ref: 'Users'
     }
 })
 
-const planModel = model<PlanDocument>('Plans', plansSchema)
+export const planModel = model<PlanDocument>('Plans', plansSchema)
