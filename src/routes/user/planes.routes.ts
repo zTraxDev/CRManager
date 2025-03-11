@@ -1,12 +1,17 @@
 import { Router } from "express";
 import { plansController } from "../../controllers/plans.controller";
 import { authMiddleware } from "../../middleware/user/auth";
+import { planeSchema } from "../../validators/planes";
+import { validatorSchema } from "../../middleware/dataValidato";
 
 const planesRouter = Router();
 
-planesRouter.post('/create', authMiddleware, plansController.createPlan)
+planesRouter.get('/getAll', authMiddleware, plansController.getPlans)
+planesRouter.get('/:id', authMiddleware, plansController.getPlan)
+planesRouter.post('/create', authMiddleware, validatorSchema(planeSchema), plansController.createPlan)
+planesRouter.patch('/update/:id', authMiddleware, plansController.updatePlan)
 planesRouter.delete('/delete/:id', authMiddleware, plansController.deletePlan)
-planesRouter.put('/update/:id', authMiddleware, plansController.updatePlan)
-planesRouter.get('/get', authMiddleware, plansController.getPlans)
+
+
 
 export default planesRouter;

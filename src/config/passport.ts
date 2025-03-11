@@ -6,15 +6,13 @@ import bcrypt from "bcryptjs"
 import { eventLogger } from "../utils/logger/logger";
 import { Types } from "mongoose";
 
-type serializeUser = string
-
 passport.use(
     new LocalStrategy(
         {usernameField: 'email', passwordField: 'password'},
         async (email, password, done) => {
             const user = await userModel.findOne({ email }).exec()
 
-            if(!user) return done(null, false, { message: 'Usuario o contraseña invalida'})
+            if(!user) return done(null, false, { message: 'Este usuario no existe'})
 
             const isMatch = await bcrypt.compare(password, user.password as string)
 
@@ -28,7 +26,7 @@ passport.use(
 
 passport.serializeUser((user: UserDocument, done) => done(null, user._id))
 
-passport.deserializeUser(async (id: serializeUser, done) => {
+passport.deserializeUser(async (id: string, done) => {
     try {
         const user = await userModel.findById(new Types.ObjectId(id)).exec();
         

@@ -15,11 +15,17 @@ export const validatorSchema =
       eventLogger.error(`Datos inválidos enviados desde ${req.baseUrl}`);
 
       // Obtener errores de Zod en un formato más simple
-      const formattedErrors = result.error.flatten().fieldErrors;
+      const formattedErrors = Object.entries(result.error.flatten().fieldErrors).map(
+        ([field, messages]) => ({
+          field,
+          message: Array.isArray(messages) && messages.length > 0 ? messages[0] : "Error desconocido",
+        })
+      );
+      
 
       return res.status(400).json({
         error: "Invalid request",
-        details: formattedErrors,
+        details: result.error.flatten().fieldErrors,
       });
     }
 
